@@ -5,6 +5,7 @@
 # Lab Section: 16
 # Sources, people worked with, help given to:
 # Python Crash Course, 3rd Edition
+# Repit AI helper
 
 # Write a function that will properly check strings to see if they are an int or float, and convert them if so
 # If they can't be converted return false
@@ -18,27 +19,25 @@ def convert_to_number(string):
   Returns:
       int or float: The converted integer or float, or False if the string cannot be converted.
   """
-  try:
-    # First, try to convert to an integer
-    return int(string)
-  except ValueError:
-    try:
-      # If it's not an integer, try to convert to a float
-      # Check for multiple decimal points using string.count('.')
-      if string.count('.') > 1:
-        return False  # Multiple decimal points are invalid
-      return float(string)
-    except ValueError:
-      # If both integer and float conversions fail, return False
+  negative = False
+  if string[0] == "-":
+    negative = True
+    string = string.replace("-","")
+  if "." in string:
+    number = string.replace(".")
+    if len(number) == 2 and number[0].isdigit() and number[1].isdigit():
+      if negative:
+        return -1*float(string)
+      else:
+        return float(string)
+    else:
       return False
-# Get input from the user
-input_string = input("Enter a value: ")
-# Convert the input and print the result
-result = convert_to_number(input_string)
-if result:
-  print(f"Converted value: {result}")
-else:
-  print("Invalid input. Cannot be converted to an integer or float.")
+  elif string.isdigit():
+    if negative:
+      return -1*int(string)
+    else:
+      return int(string)
+  return False
 print("*" * 75)
 
 # Point-slope y = mx + b
@@ -71,7 +70,7 @@ def slope_intercept(m, b, lower_bound, upper_bound):
   Returns:
       list: A list of y-values for the given x-range, or False if the input is invalid.
   """
-  if lower_bound > upper_bound or not isinstance(lower_bound, int) or not isinstance(upper_bound, int):
+  if lower_bound >= upper_bound or not isinstance(lower_bound, int) or not isinstance(upper_bound, int):
     return False
   y_values = []
   for x in range(lower_bound, upper_bound + 1):
@@ -92,10 +91,10 @@ while True:
   if upper_bound_input == "exit":
     break
   try:
-    m = float(m_input)
-    b = float(b_input)
-    lower_bound = int(lower_bound_input)
-    upper_bound = int(upper_bound_input)
+    m = convert_to_number(m_input)
+    b = convert_to_number(b_input)
+    lower_bound = convert_to_number(lower_bound_input)
+    upper_bound = convert_to_number(upper_bound_input)
     result = slope_intercept(m, b, lower_bound, upper_bound)
     if result:
       print(f"Y-values: {result}")
@@ -132,7 +131,6 @@ def quadratic_solver(a, b, c):
     x1 = (-b - cmath.sqrt(delta)) / (2 * a)
     x2 = (-b + cmath.sqrt(delta)) / (2 * a)
     return (x1, x2)
-# User input
 while True:
   a_input = input("Enter the coefficient of x^2 (a): ")
   if a_input == "exit":
@@ -144,9 +142,9 @@ while True:
   if c_input == "exit":
     break
   try:
-    a = float(a_input)
-    b = float(b_input)
-    c = float(c_input)
+    a = convert_to_number(a_input)
+    b = convert_to_number(b_input)
+    c = convert_to_number(c_input)
     solution = quadratic_solver(a, b, c)
     print(f"Solutions: {solution}")
   except ValueError:
